@@ -14,7 +14,7 @@ from IPython.core.debugger import Pdb
 ipdb = Pdb()
 
 # The root directory to save your music previews.
-save_loc = r'/data/track_previews'
+save_loc = '../../track_previews'
 
 #%% SPOTIFY IDENTIFICATION
 with open ('data/spotify_user_authentication.txt') as f:
@@ -72,7 +72,7 @@ data = pd.read_csv(path)
 #%% GET SPOTIFY VARIABLES
 conn = Connection(_id, _secret)
 #%%
-for i in range(len(data.iloc[:,1])):
+for i in range(2030,len(data.iloc[:,1])):
     if i%300==0:
        conn = Connection(_id, _secret) 
     print(i)
@@ -89,20 +89,20 @@ for i in range(len(data.iloc[:,1])):
     else:
        data.loc[i,'track_id']=''     
 #%% GET PREVIEWS FUNCTION
-def download_track(track_id,artist,name,save_loc,url):
+def download_track(track_id,artist_name,track_name,save_loc,url):
     os.makedirs(save_loc, exist_ok=True)
     f = os.path.join(save_loc, "{}.mp3".format(track_id))
     if not os.path.isfile(f):
            r = requests.get(url)
-           print("Saving {}-{}.mp3".format(artist, name))
+           print("Saving {}-{}.mp3".format(artist_name, track_name))
            print("ID: " + track_id)
            with open(f, "wb") as f:
                         f.write(r.content)
     else:
-           print("file already exists:{}-{}".format(artist, name))
+           print("file already exists:{}-{}".format(artist_name, track_name))
 #%% GET PREVIEWS    
 conn = Connection(_id, _secret)
-track_ids = data['trackID']
+track_ids = data['track_id']
 #track_ids = list(set(track_ids)) #store unique ID's
 missing_track=[]
 missing_previews = 0
@@ -116,7 +116,7 @@ for i in range(len(track_ids)):
     if i%300==0:
        conn = Connection(_id, _secret) 
     print(i)
-    track = conn.query_get('/v1/tracks/' + data.loc[i,'trackID'])
+    track = conn.query_get('/v1/tracks/' + data.loc[i,'track_id'])
     if not 'error' in dict.keys(track):
          track_name = track["name"]
          #name = re.sub("\W", "_", name)
