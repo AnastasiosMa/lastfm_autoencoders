@@ -9,6 +9,7 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense,RepeatVector,TimeDistributed,LSTM,Input,\
@@ -20,6 +21,11 @@ with open('mfccs_rock.txt','r') as f:
 
 x = np.array(data['mfcc'])
 dims = x.shape
+
+scaler = MinMaxScaler()
+
+for k in range(x.shape[1]):
+    x[:,k,:] = scaler.fit_transform(x[:,k,:])
 
 x_train, x_test = train_test_split(x,test_size = 0.2)
 #%% Create model

@@ -72,7 +72,7 @@ data = pd.read_csv(path)
 #%% GET SPOTIFY VARIABLES
 conn = Connection(_id, _secret)
 #%%
-for i in range(2030,len(data.iloc[:,1])):
+for i in range(len(data.iloc[:,1])):
     if i%300==0:
        conn = Connection(_id, _secret) 
     print(i)
