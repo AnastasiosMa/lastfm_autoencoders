@@ -42,15 +42,17 @@ model.compile(optimizer='adam', loss='mse',metrics=['mse'])
 
 #encoder_model = Model(inputs=input_layer, outputs=encoder)
 encoder_model = Model(inputs=model.inputs, outputs=model.layers[1].output)
-callbacks = [EarlyStopping(monitor='loss', min_delta=0, patience=8, verbose=1, mode='auto')]
+callbacks = [EarlyStopping(monitor='val_loss', min_delta=0, patience=8, verbose=1, mode='auto')]
 
-history = model.fit(x_train,x_train,validation_data=(x_test, x_test),batch_size=32,epochs=1000,verbose=1,callbacks = callbacks)
+history = model.fit(x,x,validation_data=(x_test, x_test),batch_size=32,epochs=1000,verbose=1,callbacks = callbacks)
 model.save('LSTM_AE.h5')
 
 plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
 plt.title('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
 #%%
@@ -65,7 +67,8 @@ transp2 = Conv2DTranspose(64, (3, 3), padding='same', activation='relu', strides
 output_layer = Conv2D(1, (3, 3), padding='same',activation='sigmoid')(transp2)
 cnn_ae = Model(cnn_input_layer,output_layer)
 cnn_ae.compile(loss='mse', optimizer='adam', metrics=['mse'])
-history = model.fit(x_train,x_train,batch_size=32,epochs=1000,verbose=1,validation_data=(x_test, x_test),callbacks = callbacks)
+history = model.fit(x,x,batch_size=32,epochs=1000,verbose=1,validation_data=(x_test, x_test),callbacks = callbacks)
+cnn_encoder_model = Model(inputs=cnn_ae.inputs, outputs=cnn_ae.layers[1].output)
 cnn_ae.summary()
 cnn_ae.save('CNN_AE.h5')
 #global_pool = GlobalAveragePooling2D()(conv2)

@@ -59,7 +59,7 @@ for idx, filename in enumerate(os.listdir(dataset_path)):
        conn = Connection(_id, _secret) 
     print(idx)
     genres = get_genres(filename[:-4])
-    genre_data['genres'].append(genres.tolist())
+    genre_data['genres'].append(genres)
     genre_data['labels'].append(filename)
     
 with open('genre_data.txt','w') as f:
