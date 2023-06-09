@@ -14,7 +14,6 @@ ipdb = Pdb()
 
 # The root directory of music previews.
 dataset_path = 'data/track_previews/'
-
 #%% SPOTIFY IDENTIFICATION
 with open ('data/spotify_user_authentication.txt') as f:
     user_password = f.readlines()
@@ -62,7 +61,7 @@ for idx, filename in enumerate(os.listdir(dataset_path)):
     genre_data['genres'].append(genres)
     genre_data['labels'].append(filename)
     
-with open('genre_data.txt','w') as f:
+with open('data/genre_data.txt','w') as f:
     json.dump(genre_data, f)
     
 

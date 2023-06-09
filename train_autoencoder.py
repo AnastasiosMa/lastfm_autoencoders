@@ -16,7 +16,7 @@ from tensorflow.keras.layers import Dense,RepeatVector,TimeDistributed,LSTM,Inpu
 Conv2D,MaxPooling2D,Conv2DTranspose
 from tensorflow.keras.callbacks import EarlyStopping
 #%% load mfccs
-with open('mfccs_rock.txt','r') as f:
+with open('data/mfccs_rock.txt','r') as f:
     data = json.load(f)    
 
 x = np.array(data['mfcc'])
@@ -26,8 +26,6 @@ scaler = MinMaxScaler()
 
 for k in range(x.shape[1]):
     x[:,k,:] = scaler.fit_transform(x[:,k,:])
-
-x_train, x_test = train_test_split(x,test_size = 0.2)
 #%% Create model
 input_layer = Input(shape=(300,40))
 
@@ -40,12 +38,10 @@ decoder = TimeDistributed(Dense(dims[2]))(decoder)
 model = Model(inputs=input_layer, outputs=decoder)
 model.compile(optimizer='adam', loss='mse',metrics=['mse'])
 
-#encoder_model = Model(inputs=input_layer, outputs=encoder)
-encoder_model = Model(inputs=model.inputs, outputs=model.layers[1].output)
 callbacks = [EarlyStopping(monitor='val_loss', min_delta=0, patience=8, verbose=1, mode='auto')]
 
 history = model.fit(x,x,validation_data=(x_test, x_test),batch_size=32,epochs=1000,verbose=1,callbacks = callbacks)
-model.save('LSTM_AE.h5')
+model.save('models/LSTM_AE.h5')
 
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
@@ -54,7 +50,6 @@ plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 plt.show()
-
 #%%
 cnn_input_layer = Input(shape=(300,40,1))
 conv1 = Conv2D(64,(3,3),padding='same',activation = 'relu')(cnn_input_layer)
@@ -68,7 +63,5 @@ output_layer = Conv2D(1, (3, 3), padding='same',activation='sigmoid')(transp2)
 cnn_ae = Model(cnn_input_layer,output_layer)
 cnn_ae.compile(loss='mse', optimizer='adam', metrics=['mse'])
 history = model.fit(x,x,batch_size=32,epochs=1000,verbose=1,validation_data=(x_test, x_test),callbacks = callbacks)
-cnn_encoder_model = Model(inputs=cnn_ae.inputs, outputs=cnn_ae.layers[1].output)
 cnn_ae.summary()
-cnn_ae.save('CNN_AE.h5')
-#global_pool = GlobalAveragePooling2D()(conv2)
+cnn_ae.save('models/CNN_AE.h5')

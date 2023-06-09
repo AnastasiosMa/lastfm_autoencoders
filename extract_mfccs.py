@@ -40,5 +40,5 @@ def preprocess(dataset_path,num_mfcc=40,n_fft=4096,hop_length=2048):
 #%% extract mfccs and save data
 mfcc_data = preprocess(dataset_path)
 
-with open('mfccs_rock.txt','w') as f:
+with open('data/mfccs_rock.txt','w') as f:
     json.dump(mfcc_data, f)
