@@ -98,7 +98,7 @@ for i in range(100):
 fields = ['track_name','artist_name','isrock']
 data = [track_name,artist_name,isrock]
 
-data = [[i,j] for i, j in zip(track_name, artist_name, isrock)]
+data = [[i,j,k] for i, j,k in zip(track_name, artist_name, isrock)]
 
 
 with open('data/classification_sample.csv','w') as f:
