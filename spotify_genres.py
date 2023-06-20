@@ -13,7 +13,7 @@ from IPython.core.debugger import Pdb
 ipdb = Pdb()
 
 # The root directory of music previews.
-dataset_path = 'data/track_previews/'
+dataset_path = 'data/rock_track_previews/'
 #%% SPOTIFY IDENTIFICATION
 with open ('data/spotify_user_authentication.txt') as f:
     user_password = f.readlines()
@@ -21,10 +21,6 @@ _id = user_password[0][0:-1]
 _secret = user_password[1][0:-1]
 #%% SPOTIFY CONNECTION FUNCTION
 class Connection:
-    """
-    Class' object instantiates a connection with spotify. When the connection is alive, queries are made with the query_get
-    method.
-    """
     def __init__(self, client_id, secret):
         # First header and parameters needed to require an access token.
         param = {"grant_type": "client_credentials"}
@@ -36,12 +32,6 @@ class Connection:
         self.base_url = "https://api.spotify.com"
 
     def query_get(self, query, params=None):
-        """
-        
-        :param query: (str) URL coming after example.com
-        :param params: (dict)
-        :return: (json) 
-        """
         return requests.get(self.base_url + query, params, headers=self.header).json()
 #%% GET SPOTIFY VARIABLES FUNCTIONS
 # Get genres from ID
@@ -61,7 +51,5 @@ for idx, filename in enumerate(os.listdir(dataset_path)):
     genre_data['genres'].append(genres)
     genre_data['labels'].append(filename)
     
-with open('data/genre_data.txt','w') as f:
+with open('data/spotify_genre_data.txt','w') as f:
     json.dump(genre_data, f)
-    
-

@@ -14,8 +14,9 @@ from IPython.core.debugger import Pdb
 ipdb = Pdb()
 
 # The root directory to save your music previews.
-save_loc = '../../track_previews'
-
+save_loc = '../../non-rock_track_previews'
+path='data/non-rock_track_info.csv'
+data = pd.read_csv(path)
 #%% SPOTIFY IDENTIFICATION
 with open ('data/spotify_user_authentication.txt') as f:
     user_password = f.readlines()
@@ -64,14 +65,9 @@ def get_id(track_name, artist_name):
            track_id = search['tracks']['items'][i]['id'] 
            break
     return(track_id)
-#%% LOAD ESM FILE
-#path=r'~/Desktop/mupsychapp/data/MuPsych Data main file.xlsx'
-#data = pd.read_excel (path,sheet_name = 'Music data',header=1,engine='openpyxl')
-path='data/track_info.csv'
-data = pd.read_csv(path)
+
 #%% GET SPOTIFY VARIABLES
 conn = Connection(_id, _secret)
-#%%
 for i in range(len(data.iloc[:,1])):
     if i%300==0:
        conn = Connection(_id, _secret) 
@@ -80,8 +76,7 @@ for i in range(len(data.iloc[:,1])):
     artist_name = data.loc[i,'artist_name']
     track_id = get_id(track_name, artist_name)
     if track_id:
-        print('trackid_found')
-        
+        print('trackid_found')        
     else:
        track_id = float('nan')
     if isinstance(track_id, (int, str)):
@@ -127,10 +122,14 @@ for i in range(len(track_ids)):
          if url:
             download_track(track_ids[i],artist_name,track_name,save_loc,url)
             print("url found")
+            data.loc[i,'preview_available'] = 1
          else:
               print("could not find url")
+              data.loc[i,'preview_available'] = 0
     elif len(track_ids[i])==0:
          print("NanTrack")                
     else:
         print("Invalid ID")
+
+data = data.iloc[data.preview_available==1,:]
 

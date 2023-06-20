@@ -24,7 +24,7 @@ cnn_model = tf.keras.models.load_model('models/CNN_AE.h5')
 cnn_encoder_model = Model(inputs=cnn_model.inputs, outputs=cnn_model.layers[4].output)
 
 #load spotify genres
-with open('data/genre_data.txt','r') as f:
+with open('data/spotify_genre_data.txt','r') as f:
     spotify_genre = json.load(f)
     
 # load mfccs

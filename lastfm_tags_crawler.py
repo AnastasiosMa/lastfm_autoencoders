@@ -51,7 +51,7 @@ data = [track_name,artist_name]
 data = [[i,j] for i, j in zip(track_name, artist_name)]
 
 
-with open('data/track_info.csv','w') as f:
+with open('data/rock_track_info.csv','w') as f:
     write = csv.writer(f)
     write.writerow(fields)
     write.writerows(data)
@@ -101,7 +101,7 @@ data = [track_name,artist_name,isrock]
 data = [[i,j,k] for i, j,k in zip(track_name, artist_name, isrock)]
 
 
-with open('data/classification_sample.csv','w') as f:
+with open('data/non-rock_track_info.csv','w') as f:
     write = csv.writer(f)
     write.writerow(fields)
     write.writerows(data)
