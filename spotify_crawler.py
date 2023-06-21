@@ -14,8 +14,8 @@ from IPython.core.debugger import Pdb
 ipdb = Pdb()
 
 # The root directory to save your music previews.
-save_loc = '../../non-rock_track_previews'
-path='data/non-rock_track_info.csv'
+save_loc = '../../top_charts_track_previews'
+path='data/top_charts_track_info.csv'
 data = pd.read_csv(path)
 #%% SPOTIFY IDENTIFICATION
 with open ('data/spotify_user_authentication.txt') as f:
@@ -66,7 +66,7 @@ def get_id(track_name, artist_name):
            break
     return(track_id)
 
-#%% GET SPOTIFY VARIABLES
+#%% GET SPOTIFY ID
 conn = Connection(_id, _secret)
 for i in range(len(data.iloc[:,1])):
     if i%300==0:
@@ -131,5 +131,5 @@ for i in range(len(track_ids)):
     else:
         print("Invalid ID")
 
-data = data.iloc[data.preview_available==1,:]
-
+data = data[data.preview_available==1]
+data.to_csv(path,index=False)

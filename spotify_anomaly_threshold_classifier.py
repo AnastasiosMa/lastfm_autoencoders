@@ -24,27 +24,53 @@ lstm_encoder_model = Model(inputs=lstm_model.inputs, outputs=lstm_model.layers[1
 cnn_model = tf.keras.models.load_model('models/CNN_AE.h5')
 cnn_encoder_model = Model(inputs=cnn_model.inputs, outputs=cnn_model.layers[4].output)
 
-top_chart_tracks = pd.read_csv('data/top_charts_track_info.csv')
+#load spotify genres
+with open('data/spotify_genre_data.txt','r') as f:
+    spotify_genre = json.load(f)
+    
+# load mfccs
+with open('data/mfccs/mfccs_rock.txt','r') as f:
+    data = json.load(f)    
 
-y  = np.array(top_chart_tracks['preview_available'])       
-
-with open('data/mfccs/top_charts_mfccs.txt','r') as f:
-    top_chart_mfccs = json.load(f)
-
-x = np.array(top_chart_mfccs['mfcc'])
+x = np.array(data['mfcc'])
 dims = x.shape
 
 scaler = MinMaxScaler()
 
 for k in range(x.shape[1]):
     x[:,k,:] = scaler.fit_transform(x[:,k,:])
+#%% Plot spotify genres
+#flatten list
+genre_list = [element for genre in spotify_genre['genres'] for element in genre]
+genre_count = Counter(genre_list)
+N = len(genre_count.keys())
+
+idx=np.argsort(list(genre_count.values()))
+sorted_values = np.array(list(genre_count.values()))[idx]
+sorted_keys = list(genre_count.keys())
+sorted_keys = [sorted_keys[index] for index in idx]
+
+fig, ax = plt.subplots()
+ax.plot(sorted(list(genre_count.values()),reverse=True))
+plt.xlabel('Spotify genres (N = {})'.format(N))
+plt.ylabel('Count')
+
+
+f, ax = plt.subplots(figsize=(5, 12))
+sns.barplot(x = sorted_values[-30:-1],y = sorted_keys[-30:-1])
+plt.xlabel('Count')
+plt.ylabel('Top 30 Genres')
+
+# Convert genres to ground truth
+y = np.array([1 if any('rock' in s for s in genre) else 0 for genre in spotify_genre['genres']]) 
 #%% Load ae models
 x_predictions = cnn_model.predict(x)
 cnn_mse = np.sum(np.sum(np.power(x - np.squeeze(x_predictions), 2), axis=1), axis=1)#/(x.shape[1]*x.shape[2])
 
 x_predictions = lstm_model.predict(x)
 lstm_mse = np.sum(np.sum(np.power(x - np.squeeze(x_predictions), 2), axis=1), axis=1)/(x.shape[1]*x.shape[2])
-#%% Fit logistic regression to mse to estimate anomaly threshold
+
+#%% Spotify genre comparison analysis
 def mse_analysis(mse,y):
     
     true_mse=mse[y==1]

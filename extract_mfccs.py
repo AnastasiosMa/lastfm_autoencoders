@@ -15,7 +15,7 @@ import csv
 import warnings
 import json
 #warnings.filterwarnings("ignore")
-dataset_path = 'data/track_previews/'
+dataset_path = 'data/top_charts_track_previews/'
 #%% Extract mfccs function
 def preprocess(dataset_path,num_mfcc=40,n_fft=4096,hop_length=2048):
     data = {"labels":[],"mfcc":[]}
@@ -40,5 +40,5 @@ def preprocess(dataset_path,num_mfcc=40,n_fft=4096,hop_length=2048):
 #%% extract mfccs and save data
 mfcc_data = preprocess(dataset_path)
 
-with open('data/mfccs_rock.txt','w') as f:
+with open('data/top_charts_mfccs_rock.txt','w') as f:
     json.dump(mfcc_data, f)
